@@ -1,13 +1,13 @@
 import './other';
-import Worker from 'workerize-loader?ready&name=test!./worker';
-import InlineWorker from 'workerize-loader?ready&inline&name=test!./worker';
+import Worker from 'workerize-proxy-loader?ready&name=test!./worker';
+import InlineWorker from 'workerize-proxy-loader?ready&inline&name=test!./worker';
 
 describe('worker', () => {
 	let worker;
 
 	it('should be an instance of Worker', () => {
 		worker = new Worker();
-		expect(worker).toEqual(jasmine.any(window.Worker));
+		expect(worker instanceof window.Worker).toBeTruthy();
 	});
 
 	it('worker.foo()', async () => {

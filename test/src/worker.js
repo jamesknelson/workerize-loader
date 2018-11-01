@@ -2,12 +2,14 @@ import { otherFoo, otherBar } from './other';
 
 export { otherFoo };
 
-export function foo() {
+function foo() {
 	return 1;
 }
 
-export function throwError() {
+function throwError() {
 	throw new Error('Error in worker.js');
 }
 
-export const bar = (a, b) => `${a} [bar:${otherBar}] ${b}`;
+const bar = (a, b) => `${a} [bar:${otherBar}] ${b}`;
+
+export { foo, throwError, bar }

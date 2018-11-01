@@ -7,7 +7,6 @@ import WebWorkerTemplatePlugin from 'webpack/lib/webworker/WebWorkerTemplatePlug
 
 export default function loader() {}
 
-const CACHE = {};
 const tapName = 'workerize-loader';
 
 function compilationHook(compiler, handler) {
@@ -107,9 +106,6 @@ loader.pitch = function(request) {
 			worker.file = entries[0].files[0];
 
 			let contents = compilation.assets[worker.file].source();
-			let exports = Object.keys(CACHE[worker.file] = compilation.__workerizeExports || CACHE[worker.file] || {});
-
-			// console.log('Workerized exports: ', exports.join(', '));
 
 			if (options.inline) {
 				worker.url = `URL.createObjectURL(new Blob([${JSON.stringify(contents)}]))`;
@@ -123,13 +119,11 @@ loader.pitch = function(request) {
 			}
 
 			return cb(null, `
-				var addMethods = require(${loaderUtils.stringifyRequest(this, path.resolve(__dirname, 'rpc-wrapper.js'))})
-				var methods = ${JSON.stringify(exports)}
+				var proxy = require(${loaderUtils.stringifyRequest(this, path.resolve(__dirname, 'rpc-wrapper.js'))})
 				module.exports = function() {
 					var w = new Worker(${worker.url}, { name: ${JSON.stringify(filename)} })
-					addMethods(w, methods)
 					${ options.ready ? 'w.ready = new Promise(function(r) { w.addEventListener("ready", function(){ r(w) }) })' : '' }
-					return w
+					return proxy(w)
 				}
 			`);
 		}

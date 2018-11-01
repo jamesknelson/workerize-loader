@@ -1,9 +1,9 @@
 {
-  "name": "workerize-loader",
+  "name": "workerize-proxy-loader",
   "version": "1.0.4",
-  "description": "Automatically move a module into a Web Worker (Webpack loader)",
+  "description": "Automatically move a module into a Web Worker (Webpack loader) using proxies",
   "main": "dist/index.js",
-  "repository": "developit/workerize-loader",
+  "repository": "jamesknelson/workerize-loader",
   "scripts": {
     "build": "microbundle --target node --format cjs --no-compress src/*.js",
     "prepublishOnly": "npm run build",

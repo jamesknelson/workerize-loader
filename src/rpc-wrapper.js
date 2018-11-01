@@ -1,4 +1,4 @@
-export default function addMethods(worker, methods) {
+export default function proxy(worker, methods) {
 	let c = 0;
 	let callbacks = {};
 	worker.addEventListener('message', (e) => {
@@ -23,11 +23,23 @@ export default function addMethods(worker, methods) {
 			worker.dispatchEvent(evt);
 		}
 	});
-	methods.forEach( method => {
-		worker[method] = (...params) => new Promise( (a, b) => {
-			let id = ++c;
-			callbacks[id] = [a, b];
-			worker.postMessage({ type: 'RPC', id, method, params });
-		});
-	});
+	return new Proxy(worker, {
+		get: function(target, method) {
+			if (target[method]) {
+				let obj = target[method]
+				return typeof obj === 'function' ? target[method].bind(target) : obj
+			}
+			else {
+				return new Proxy(() => {}, {
+					apply: function(target, thisArg, params) {
+						return new Promise( (a, b) => {
+							let id = ++c;
+							callbacks[id] = [a, b];
+							worker.postMessage({ type: 'RPC', id, method, params });
+						})
+					}
+				})
+			}
+		}
+	})
 }
