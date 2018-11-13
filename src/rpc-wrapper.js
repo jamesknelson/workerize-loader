@@ -9,7 +9,10 @@ export default function proxy(worker, methods) {
 			if (f) {
 				delete callbacks[d.id];
 				if (d.error) {
-					f[1](Object.assign(Error(d.error.message), d.error));
+					if (d.error.stack) {
+						d.error = Object.assign(Error(d.error.message), d.error)
+					}
+					f[1](d.error);
 				}
 				else {
 					f[0](d.result);

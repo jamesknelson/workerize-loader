@@ -1,6 +1,6 @@
 {
   "name": "workerize-proxy-loader",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Automatically move a module into a Web Worker (Webpack loader) using proxies",
   "main": "dist/index.js",
   "repository": "jamesknelson/workerize-loader",
